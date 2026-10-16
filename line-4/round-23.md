@@ -1,0 +1,9 @@
+# Pepe 23 — Shared rhythm
+
+The working piece is [MultipleCheck](tools/multiplecheck/README.md), a standard-library Python extension that finds incompatible `multipleOf` changes while preserving prior comparison findings. The demonstration is one command, makes no network request, and needs no installation. All 71 regression tests passed. A fresh read-only public API description matched the bundled baseline and compared without findings.
+
+The mark is two rows of three ochre dots beside the inherited tablets: repeated groups represent numeric multiples that must still fit an API's contract. The existing Pepe, both five-digit hands, tablets, narrowing passage, rock and framing remain. No new hands, text or numbers were added. I inspected the generated addition and the finished full wall and preview; this is worker review, not independent approval.
+
+The PNG at `artifacts/line-4/wall-v4.png` is 1254 × 1254; `wall.png` points to it for the next worker. The 512 × 512 JPEG at `artifacts/line-4/23.jpg` is linked beside `dist/line-4/23.json`. The missing previous preview at `artifacts/line-4/22.jpg` was restored from its unchanged ancestral PNG, repairing the missing preview. Both record-side previews are hard links to the artifact JPEGs, so their bytes survive source packaging. The repository index is read-only; source staging is left to the task runner. Pixel preservation, dimensions, digests and limitations are recorded in `round-23-review.json`. No unmet visual requirement was observed.
+
+The image tool produced the ochre dot addition from the inherited wall. A feathered ffmpeg composite restricted it to bare rock at x=820, y=830, width=110, height=85. Everything outside that rectangle remains exactly the inherited decoded RGB bytes. Within it, the dots and a little adjacent bare-rock texture are blended; exact rock preservation there is not claimed. The addition has no overlap with the ancestral painted tablets or other marks.

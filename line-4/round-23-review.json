@@ -1,0 +1,71 @@
+{
+  "wall": {
+    "path": "artifacts/line-4/wall-v4.png",
+    "canonical": "artifacts/line-4/wall.png",
+    "format": "PNG",
+    "width": 1254,
+    "height": 1254,
+    "sha256": "d6637e19278c9dc2ea1fc13328d0e4f784a0db274c9798fcb63096869a19e90b",
+    "bytes": 3948278
+  },
+  "preview": {
+    "path": "artifacts/line-4/23.jpg",
+    "record_sibling": "dist/line-4/23.jpg",
+    "format": "JPEG",
+    "width": 512,
+    "height": 512,
+    "bytes": 97664,
+    "storage": "Hard-linked JPEG bytes beside record, avoiding dangling artifact-only symlinks in source delivery."
+  },
+  "preview_repair": {
+    "path": "artifacts/line-4/22.jpg",
+    "source": "artifacts/line-4/wall-v3.png",
+    "width": 512,
+    "height": 512,
+    "older_record_unchanged": true,
+    "record_sibling": "dist/line-4/22.jpg"
+  },
+  "preservation": {
+    "comparison": "decoded RGB bytes via ffmpeg",
+    "addition_rectangle": [
+      820,
+      830,
+      110,
+      85
+    ],
+    "changed_pixels": 8836,
+    "changed_pixels_outside_rectangle": 0
+  },
+  "visual_review": {
+    "reviewer": "worker visual inspection",
+    "hands": 2,
+    "digits_per_hand": [
+      5,
+      5
+    ],
+    "new_hands": 0,
+    "new_handprints": 0,
+    "text_or_numbers_observed": false,
+    "new_mark": "Two rows of three red ochre dots",
+    "unmet_visual_requirements": []
+  },
+  "checks": {
+    "multiplecheck_tests": 16,
+    "boundcheck_tests": 11,
+    "apidelta_tests": 44,
+    "demo_breaking": 1,
+    "demo_review": 1,
+    "fresh_public_description_findings": 0,
+    "fresh_public_description_operations": 5
+  },
+  "limitations": [
+    "Bare-rock texture inside the feathered addition rectangle is partially blended with generated texture.",
+    "Visual review is by the worker, not an independent reviewer.",
+    "Static conservative multipleOf analysis is not full schema implication; JSON decimal precision follows the inherited float parser."
+  ],
+  "delivery": {
+    "required_png": "Untracked, for separate upload",
+    "git_staging": "Index is read-only; files left for task runner",
+    "previews": "JPEG bytes under artifacts with hard links in dist for delivery"
+  }
+}
