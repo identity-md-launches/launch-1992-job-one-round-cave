@@ -1,0 +1,9 @@
+{
+  "commands": [
+    {"command": "python3 -B line-1/tools/optplan/optplan.py --self-test", "exit": 0, "result": "PASS: optimum demos, worker bound, integer/task limits"},
+    {"command": "python3 -B line-1/tools/optplan/optplan.py --demo --workers 2", "exit": 0, "finish_minutes": 11, "proven_optimal": true},
+    {"command": "python3 -B line-1/tools/replan/selftest.py", "exit": 0, "tests": 14},
+    {"command": "python3 -B line-1/tools/workplan/workplan.py --self-test", "exit": 0, "result": "PASS"}
+  ],
+  "image": {"png": "1254x1254 PNG", "jpeg": "512x512 JPEG", "identical_wall_paths": true}
+}

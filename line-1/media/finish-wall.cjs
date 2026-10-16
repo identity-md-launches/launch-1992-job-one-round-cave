@@ -101,14 +101,13 @@ function thumbnail(image) {
 }
 const clamp = value => Math.min(1, Math.max(0, value));
 function mask(x, y) {
-  // Only previously bare stone: a small rectangle around the snail and stones,
-  // and isolated disks around its new trail. The ancestral figure is excluded.
-  const snail = clamp(Math.min(x-550, 786-x, y-779, 945-y)/10);
-  const dots = [[758,870],[777,862],[789,845],[797,828],[801,806],[801,784],
-                [811,764],[829,750],[847,741],[864,725],[871,704],[874,681],[872,659]];
+  // Only bare stone around the round-23 stepping stones and handprint. Isolated
+  // disks deliberately exclude the old sun, dotted trail, snail and Pepe.
+  const dots = [[848,851],[907,819],[966,780],[1009,748],
+                [875,843],[891,833],[923,811],[941,799],[984,771]];
   let trail=0;
-  for(const [cx,cy] of dots) trail=Math.max(trail,clamp((12-Math.hypot(x-cx,y-cy))/4));
-  return Math.max(snail,trail);
+  for(const [cx,cy] of dots) trail=Math.max(trail,clamp((34-Math.hypot(x-cx,y-cy))/8));
+  return trail;
 }
 function main() {
   const [oldPath, generatedPath, previewPath] = process.argv.slice(2);

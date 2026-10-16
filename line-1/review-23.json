@@ -1,0 +1,15 @@
+{
+  "wall": "artifacts/line-1/wall-v4.png",
+  "sha256": "e3bb6c2d28c24b21fa05584ad27b70a09aef456f1f738c02cd0e4b1646f382fb",
+  "format": "PNG",
+  "width": 1254,
+  "height": 1254,
+  "preview": "dist/line-1/23.jpg",
+  "preview_format": "JPEG",
+  "preview_width": 512,
+  "preview_height": 512,
+  "new_mark": "Three ochre stepping stones and a chalk five-digit handprint on bare rock.",
+  "preservation": {"protected_pixels": 1556115, "changed_pixels": 16257, "total_pixels": 1572516},
+  "visual_review": {"pepe_cave_figure_present": true, "pepe_hand_digits": [5, 5], "new_handprint_digits": 5, "text_or_numbers": false, "unmet_visual_requirements": []},
+  "note": "Digit counts and visual observations are manual review, not machine certification."
+}

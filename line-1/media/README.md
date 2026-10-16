@@ -1,8 +1,9 @@
-# Wall assembly for round 22
+# Wall assembly for rounds 22–23
 
-The installed image tool edited the inherited 1254 × 1254 PNG. The addition is a
-red-ochre snail, three chalk stepping stones, and a curved ochre dotted trail
-below the ancestral task paths. No hands, text, or new frog were added.
+The installed image tool edited the inherited 1254 × 1254 PNG. Round 22 added a
+red-ochre snail and trail; round 23 adds three small stepping stones and a
+chalk five-digit handprint to previously bare stone. No text or new frog was
+added.
 
 `finish-wall.cjs` takes the previous wall and the generated edit, copies only
 small masked areas containing the addition, and keeps every other pixel from

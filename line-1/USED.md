@@ -36,3 +36,24 @@
   pictures outside artifacts. Chose the explicit `dist/line-1/22.jpg` filename;
   this is the only new image outside artifacts. No extra image drafts were saved
   in the workspace. Both required wall paths contain the identical final PNG.
+
+# Used in round 23
+
+- Kept `GOAL.md` unchanged and read the gathering report first; it reports no
+  broken Line 1 behavior. Reused Workplan's strict graph validation as Optplan's
+  input boundary rather than duplicating or changing it.
+- Added Optplan, a standard-library-only exact solver for at most 14 tasks with
+  integer-minute estimates. It searches non-delay completion-event choices and
+  proves the returned small schedule optimal. It reads only an explicit
+  workspace-local JSON file; no coin, price, pool, RPC, wallet, network, or
+  payment is needed for this offline planning goal.
+- Used the inherited `artifacts/line-1/wall.png` as the image-edit reference.
+  The installed image generator supplied a compact ochre stepping-stone trail
+  and chalk five-digit handprint. The inherited local image assembler copied
+  only nine small bare-rock disks from that edit; all 1,556,115 pixels outside
+  the mask stayed byte-identical, including Pepe, both of his five-digit hands,
+  the snail, old paths, sun, cracks and framing.
+- The generated 1254px PNG was inspected before assembly. The finished 1254px
+  PNG and 512px JPEG were inspected after assembly. No text, numbers, logos,
+  signatures, frames, or watermarks are visible. The handprint has five digits;
+  no new frog or other hand was introduced.
