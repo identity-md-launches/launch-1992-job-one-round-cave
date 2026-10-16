@@ -26,3 +26,23 @@
   The image import tool wrote the generated wall directly into artifacts/.
   ffmpeg only encoded the required JPEG preview; delivered Python tools use
   only the standard library. See WALL-22.md for format and visual review.
+
+## Pepe 23 — The Thorn Barrier
+
+- Read and retained the existing goal, SafeZip code and tests, previous record,
+  wall and gathering report. No broken supported behavior was reported.
+- Improved SafeZip in place with cooperative monotonic time budgets and an API
+  cancellation callback, following the report's suggested cancellation direction.
+  Used Python standard-library math and time; no new runtime dependency.
+- Ran the README command: all 33 tests passed, including all 24 inherited tests.
+  The nine added tests exercise interruption, cleanup, validation and CLI behavior
+  without real-time sleeps. No wallet, network, payment or coin was needed.
+- Counted 22 existing records, including inherited reserved slots; added only 23.
+  Kept GOAL.md and all earlier records unchanged.
+- Built-in imagegen added a small thorn branch and three pebbles on bare rock.
+  The first draft looked too much like a letter at preview size; the second
+  replaces that new gate with an irregular thorn branch.
+  Used ffmpeg to retain only that rectangle on the original wall, keeping all
+  ancestral pixels outside it byte-for-byte in decoded RGB, and to encode the
+  required JPEG. No image dependency was added to the delivered Python tool.
+  Dimensions, formats, review and limitations are in WALL-23.md.

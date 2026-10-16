@@ -271,6 +271,115 @@ class SafeZipTests(unittest.TestCase):
         self.assertEqual(json.loads(result.stdout)['archive_sha256'], digest)
         self.assertEqual((self.output / 'ok').read_bytes(), b'reviewed')
 
+    def assert_unpublished(self):
+        self.assertFalse(self.output.exists())
+        self.assertFalse(list(self.root.glob('.safezip-*')))
+
+    def test_cancellation_before_read(self):
+        with mock.patch.object(Path, 'open') as opened:
+            with self.assertRaisesRegex(Rejected, 'cancelled'):
+                process(self.archive, self.output, cancelled=lambda: True)
+            opened.assert_not_called()
+        self.assert_unpublished()
+
+    def test_cancel_during_snapshot(self):
+        self.make([('large', b'x' * 150000)])
+        calls = 0
+
+        def cancel():
+            nonlocal calls
+            calls += 1
+            return calls == 3  # Entry check, first read, then second read.
+
+        with mock.patch('safezip.zipfile.ZipFile') as parser:
+            with self.assertRaisesRegex(Rejected, 'cancelled'):
+                process(self.archive, self.output, cancelled=cancel)
+            parser.assert_not_called()
+        self.assert_unpublished()
+
+    def test_cancel_in_inventory(self):
+        self.make([('a', b''), ('b', b'')])
+        import safezip
+        original = safezip.member_name
+        visited = []
+
+        def visit(info):
+            visited.append(info.filename)
+            return original(info)
+
+        with mock.patch('safezip.member_name', side_effect=visit):
+            with self.assertRaisesRegex(Rejected, 'cancelled'):
+                process(self.archive, self.output, cancelled=lambda: bool(visited))
+        self.assertEqual(visited, ['a'])
+        self.assert_unpublished()
+
+    def test_cancel_mid_payload_cleans_stage(self):
+        self.make([('large', b'x' * 150000)])
+
+        def cancel_after_chunk():
+            return any((stage / 'large').exists()
+                       and (stage / 'large').stat().st_size >= 65536
+                       for stage in self.root.glob('.safezip-*'))
+
+        with self.assertRaisesRegex(Rejected, 'cancelled'):
+            process(self.archive, self.output, cancelled=cancel_after_chunk)
+        self.assert_unpublished()
+
+    def test_cancel_before_publish_empty_archive(self):
+        self.make([])
+        with self.assertRaisesRegex(Rejected, 'cancelled'):
+            process(self.archive, self.output,
+                    cancelled=lambda: bool(list(self.root.glob('.safezip-*'))))
+        self.assert_unpublished()
+
+    def test_time_budget_before_read_and_after_staging(self):
+        self.make([('ok', b'content')])
+        with mock.patch('safezip.time.monotonic', side_effect=[10, 11]):
+            with self.assertRaisesRegex(Rejected, 'time budget'):
+                process(self.archive, self.output, seconds=1)
+        self.assert_unpublished()
+
+        def clock():
+            return 20 if list(self.root.glob('.safezip-*')) else 10
+
+        with mock.patch('safezip.time.monotonic', side_effect=clock):
+            with self.assertRaisesRegex(Rejected, 'time budget'):
+                process(self.archive, self.output, seconds=5)
+        self.assert_unpublished()
+
+    def test_interruption_options_validate(self):
+        for seconds in (0, -1, float('inf'), float('-inf'), float('nan'), True, '1', 10 ** 1000):
+            with self.subTest(seconds=seconds), self.assertRaises(Rejected):
+                process(self.archive, self.output, seconds=seconds)
+        with self.assertRaisesRegex(Rejected, 'callable'):
+            process(self.archive, cancelled=True)
+        self.assert_unpublished()
+
+    def test_generous_budget_and_non_cancelled_roundtrip(self):
+        self.make([('ok', b'content')])
+        with mock.patch('safezip.time.monotonic', return_value=10):
+            result = process(self.archive, self.output, seconds=1,
+                             cancelled=lambda: False)
+        self.assertTrue(result['content_checked'])
+        self.assertEqual((self.output / 'ok').read_bytes(), b'content')
+
+    def test_budget_cli(self):
+        import subprocess
+        self.make([('ok', b'content')])
+        script = str(Path(__file__).with_name('safezip.py'))
+        for seconds in ('0', '-1', 'nan', 'inf', '1e-300'):
+            result = subprocess.run(['python3', '-B', script, 'extract', str(self.archive),
+                                     str(self.output), '--seconds', seconds],
+                                    capture_output=True, text=True)
+            self.assertEqual(result.returncode, 2, result.stderr)
+            self.assertFalse(json.loads(result.stdout)['ok'])
+            self.assert_unpublished()
+        result = subprocess.run(['python3', '-B', script, 'extract', str(self.archive),
+                                 str(self.output), '--seconds', '60'],
+                                capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertTrue(json.loads(result.stdout)['ok'])
+
     def test_cli(self):
         import subprocess
         self.make([('ok', b'x')])
