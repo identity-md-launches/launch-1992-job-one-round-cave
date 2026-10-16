@@ -5,18 +5,21 @@ import hashlib
 import hmac
 import io
 import json
+import math
 from pathlib import Path
 import re
 import sys
+import time
 import zipfile
 import zlib
 
-from vendor import apidelta, boundcheck, safezip
+from vendor import apidelta, multiplecheck, safezip
 
 MAX_ARCHIVE = 32 * 1024 * 1024
 
 
-def read_bundle(path, member='openapi.json', expected_sha256=None):
+def read_bundle(path, member='openapi.json', expected_sha256=None, checkpoint=lambda: None):
+    checkpoint()
     if expected_sha256 is not None and (
             not isinstance(expected_sha256, str)
             or re.fullmatch(r'[0-9a-fA-F]{64}', expected_sha256) is None):
@@ -26,8 +29,16 @@ def read_bundle(path, member='openapi.json', expected_sha256=None):
     path = safezip.local_path(path)
     if not path.is_file():
         raise ValueError('archive must be an ordinary workspace file')
+    raw = bytearray()
     with path.open('rb') as source:
-        raw = source.read(MAX_ARCHIVE + 1)
+        while True:
+            checkpoint()
+            chunk = source.read(min(65536, MAX_ARCHIVE + 1 - len(raw)))
+            if not chunk:
+                break
+            raw.extend(chunk)
+            if len(raw) > MAX_ARCHIVE:
+                raise ValueError('archive exceeds 32 MiB')
     if len(raw) > MAX_ARCHIVE:
         raise ValueError('archive exceeds 32 MiB')
     archive_sha256 = hashlib.sha256(raw).hexdigest()
@@ -39,9 +50,11 @@ def read_bundle(path, member='openapi.json', expected_sha256=None):
     selected = None
     inventory = []
     actual_total = 0
+    checkpoint()
     with zipfile.ZipFile(io.BytesIO(raw)) as archive:
-        entries, _ = safezip.inventory(archive, limits)
+        entries, _ = safezip.inventory(archive, limits, checkpoint)
         for info, name in entries:
+            checkpoint()
             if info.is_dir():
                 continue
             if name == member and info.file_size > apidelta.MAX_BYTES:
@@ -51,6 +64,7 @@ def read_bundle(path, member='openapi.json', expected_sha256=None):
             payload = bytearray() if name == member else None
             with archive.open(info) as stream:
                 while True:
+                    checkpoint()
                     chunk = stream.read(65536)
                     if not chunk:
                         break
@@ -68,6 +82,7 @@ def read_bundle(path, member='openapi.json', expected_sha256=None):
             inventory.append({'path': name, 'bytes': count, 'sha256': digest.hexdigest()})
             if payload is not None:
                 selected = bytes(payload)
+    checkpoint()
     if selected is None:
         raise ValueError('selected description is missing or is a directory')
     obj = json.loads(selected, object_pairs_hook=apidelta.pairs,
@@ -79,10 +94,32 @@ def read_bundle(path, member='openapi.json', expected_sha256=None):
                  'checked_files': inventory, 'all_payloads_crc_checked': True}
 
 
-def compare(old, new, member='openapi.json', old_sha256=None, new_sha256=None):
-    a, before = read_bundle(old, member, old_sha256)
-    b, after = read_bundle(new, member, new_sha256)
-    report = boundcheck.compare(a, b)
+def compare(old, new, member='openapi.json', old_sha256=None, new_sha256=None,
+            seconds=None, cancelled=None):
+    if seconds is not None:
+        try:
+            valid_seconds = (not isinstance(seconds, bool)
+                             and isinstance(seconds, (int, float))
+                             and math.isfinite(seconds) and seconds > 0)
+        except OverflowError:
+            valid_seconds = False
+        if not valid_seconds:
+            raise ValueError('seconds must be a finite positive number')
+    if cancelled is not None and not callable(cancelled):
+        raise ValueError('cancelled must be callable')
+    deadline = time.monotonic() + seconds if seconds is not None else None
+
+    def checkpoint():
+        if cancelled is not None and cancelled():
+            raise ValueError('operation cancelled')
+        if deadline is not None and time.monotonic() >= deadline:
+            raise ValueError('operation time budget exceeded')
+
+    a, before = read_bundle(old, member, old_sha256, checkpoint)
+    b, after = read_bundle(new, member, new_sha256, checkpoint)
+    checkpoint()
+    report = multiplecheck.compare(a, b)
+    checkpoint()
     report['bundle_inputs'] = {'old': before, 'new': after}
     return report
 
@@ -94,9 +131,11 @@ def main():
     parser.add_argument('--member', default='openapi.json', help='exact member name in both ZIPs')
     parser.add_argument('--old-sha256', help='require these exact approved old archive bytes')
     parser.add_argument('--new-sha256', help='require these exact approved new archive bytes')
+    parser.add_argument('--seconds', type=float, help='cooperative time budget for the whole comparison')
     args = parser.parse_args()
     try:
-        report = compare(args.old, args.new, args.member, args.old_sha256, args.new_sha256)
+        report = compare(args.old, args.new, args.member, args.old_sha256,
+                         args.new_sha256, args.seconds)
         print(json.dumps(report, indent=2, allow_nan=False))
         return {'breaking': 1, 'review_required': 3, 'no_detected_breakage': 0}[report['status']]
     except (ValueError, OSError, RuntimeError, EOFError, zipfile.BadZipFile,

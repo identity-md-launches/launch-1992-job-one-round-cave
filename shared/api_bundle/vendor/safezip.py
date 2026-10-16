@@ -5,12 +5,14 @@ import hashlib
 import hmac
 import io
 import json
+import math
 import os
 from pathlib import Path
 import re
 import shutil
 import stat
 import tempfile
+import time
 import unicodedata
 import zlib
 import zipfile
@@ -67,7 +69,7 @@ def member_name(info):
     return '/'.join(parts)
 
 
-def inventory(archive, limits):
+def inventory(archive, limits, checkpoint=lambda: None):
     infos = archive.infolist()
     if len(infos) > limits.entries:
         raise Rejected('entry limit exceeded')
@@ -76,6 +78,7 @@ def inventory(archive, limits):
     total = 0
     entries = []
     for info in infos:
+        checkpoint()
         name = member_name(info)
         key = name.casefold()
         if key in explicit:
@@ -104,7 +107,28 @@ def inventory(archive, limits):
 
 def process(archive_path, output=None, *, entries=1000, file_bytes=16*1024*1024,
             total_bytes=64*1024*1024, archive_bytes=32*1024*1024, ratio=200,
-            expected_sha256=None):
+            expected_sha256=None, seconds=None, cancelled=None):
+    # Cooperative interruption: no thread, signal handler or environment access.
+    if seconds is not None:
+        try:
+            valid_seconds = (not isinstance(seconds, bool)
+                             and isinstance(seconds, (int, float))
+                             and math.isfinite(seconds) and seconds > 0)
+        except OverflowError:
+            valid_seconds = False
+        if not valid_seconds:
+            raise Rejected('seconds must be a finite positive number')
+    if cancelled is not None and not callable(cancelled):
+        raise Rejected('cancelled must be a callable')
+    started = time.monotonic() if seconds is not None else None
+
+    def checkpoint():
+        if cancelled is not None and cancelled():
+            raise Rejected('operation cancelled')
+        if seconds is not None and time.monotonic() - started >= seconds:
+            raise Rejected('operation time budget exceeded')
+
+    checkpoint()
     limits = argparse.Namespace(entries=entries, file_bytes=file_bytes,
                                 total_bytes=total_bytes, ratio=ratio)
     if min(entries, file_bytes, total_bytes, archive_bytes, ratio) <= 0:
@@ -133,6 +157,7 @@ def process(archive_path, output=None, *, entries=1000, file_bytes=16*1024*1024,
             if not stat.S_ISREG(os.fstat(reader.fileno()).st_mode):
                 raise Rejected('archive must be a regular file')
             while True:
+                checkpoint()
                 chunk = reader.read(min(65536, archive_bytes - captured + 1))
                 if not chunk:
                     break
@@ -145,14 +170,18 @@ def process(archive_path, output=None, *, entries=1000, file_bytes=16*1024*1024,
         if expected_sha256 is not None and not hmac.compare_digest(
                 archive_sha256, expected_sha256.lower()):
             raise Rejected('archive SHA-256 differs from approved digest')
+        checkpoint()
         snapshot.seek(0)
         with snapshot, zipfile.ZipFile(snapshot) as archive:
-            members, total = inventory(archive, limits)
+            checkpoint()
+            members, total = inventory(archive, limits, checkpoint)
+            checkpoint()
             if target is not None:
                 stage = Path(tempfile.mkdtemp(prefix='.safezip-', dir=target.parent))
             records = []
             actual_total = 0
             for info, name in members:
+                checkpoint()
                 record = {'path': name, 'kind': 'directory' if info.is_dir() else 'file',
                           'bytes': info.file_size}
                 if info.is_dir():
@@ -169,6 +198,7 @@ def process(archive_path, output=None, *, entries=1000, file_bytes=16*1024*1024,
                             destination = path.open('xb')
                         with archive.open(info) as reader:
                             while True:
+                                checkpoint()
                                 chunk = reader.read(65536)
                                 if not chunk:
                                     break
@@ -186,6 +216,7 @@ def process(archive_path, output=None, *, entries=1000, file_bytes=16*1024*1024,
                         raise Rejected('declared and actual size differ')
                     record['sha256'] = digest.hexdigest()
                 records.append(record)
+            checkpoint()
             if target is not None:
                 # A cooperative workspace is required; no concurrent path mutations.
                 if target.exists() or target.is_symlink():
@@ -209,6 +240,7 @@ def main():
                           ('total-bytes', 64*1024*1024), ('archive-bytes', 32*1024*1024),
                           ('ratio', 200)]:
         parser.add_argument('--' + flag, type=int, default=default)
+    parser.add_argument('--seconds', type=float, help='cooperative time budget in seconds')
     parser.add_argument('--sha256', help='require these exact approved archive bytes')
     args = parser.parse_args()
     if (args.command == 'extract') != (args.output is not None):
@@ -217,7 +249,7 @@ def main():
         result = process(args.archive, args.output, entries=args.entries,
                          file_bytes=args.file_bytes, total_bytes=args.total_bytes,
                          archive_bytes=args.archive_bytes, ratio=args.ratio,
-                         expected_sha256=args.sha256)
+                         expected_sha256=args.sha256, seconds=args.seconds)
     except (ValueError, OSError, zipfile.BadZipFile, NotImplementedError, RuntimeError, EOFError, zlib.error) as error:
         print(json.dumps({'ok': False, 'error': str(error)}, ensure_ascii=True))
         return 2

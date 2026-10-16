@@ -1,9 +1,9 @@
 {
   "vendor/safezip.py": {
     "source": "line-2/tools/safezip/safezip.py",
-    "source_sha256": "a45aaea318d8cf7e71f68d7a2be8ce53732f1841bc5b1f40c238d663033c78e3",
-    "sha256": "a45aaea318d8cf7e71f68d7a2be8ce53732f1841bc5b1f40c238d663033c78e3",
-    "adaptation": "Byte-identical snapshot."
+    "source_sha256": "ac41f26446b0d121b035fdc7eb55589068e7923ab0d36c18b0145fd47a2fc7a3",
+    "sha256": "ac41f26446b0d121b035fdc7eb55589068e7923ab0d36c18b0145fd47a2fc7a3",
+    "adaptation": "Byte-identical snapshot, including cooperative cancellation checkpoints."
   },
   "vendor/apidelta.py": {
     "source": "line-4/tools/apidelta/apidelta.py",
@@ -16,5 +16,11 @@
     "source_sha256": "ad7fc5ccf92017fe2864f95be3cfbe73739afed08c784a4c828314083fc639e6",
     "sha256": "3beda300b6333055258841c4c7db7d70be5151a80dcfbac3a31345b4713f4303",
     "adaptation": "Sibling ApiDelta and capture paths adjusted for shared vendor layout only."
+  },
+  "vendor/multiplecheck.py": {
+    "source": "line-4/tools/multiplecheck/multiplecheck.py",
+    "source_sha256": "2fb144bc429388dadea917e0125cf5f64becd2c144835873abe77047f02d540d",
+    "sha256": "5a3016aea9c2c3b48868dcd350303386bc020e595b09e78a0e320ddba183afe0",
+    "adaptation": "Sibling BoundCheck and capture paths adjusted for shared vendor layout only."
   }
 }

@@ -164,7 +164,7 @@ class BundleTests(unittest.TestCase):
         proposed['paths']['/requests/quote']['post']['requestBody']['content']['application/json']['schema']['properties']['clientNote']['maxLength'] = 80
         old, new = self.archive('old.zip', baseline), self.archive('new.zip', proposed)
         report = bundle.compare(old, new)
-        self.assertEqual(report['extension'], 'boundcheck-v1')
+        self.assertEqual(report['extension'], 'multiplecheck-v1 (includes boundcheck-v1)')
         self.assertEqual(report['counts']['breaking'], 1)
         self.assertEqual(report['counts']['review'], 1)
         self.assertIn('size_bound_incompatible', [f['code'] for f in report['findings']])
@@ -187,6 +187,41 @@ class BundleTests(unittest.TestCase):
         result = subprocess.run(argv + ['not-a-digest'], capture_output=True, text=True, timeout=10)
         self.assertEqual(result.returncode, 2, result.stderr)
         self.assertFalse(json.loads(result.stdout)['ok'])
+
+    def test_multiple_of_break_and_integer_equivalence_in_zip(self):
+        old_doc = copy.deepcopy(self.doc)
+        op = old_doc['paths']['/items']['get']
+        op['requestBody'] = {'content': {'application/json': {
+            'schema': {'type': 'integer', 'multipleOf': 2}}}}
+        changed = copy.deepcopy(old_doc)
+        changed['paths']['/items']['get']['requestBody']['content']['application/json']['schema']['multipleOf'] = 3
+        old, new = self.archive('old.zip', old_doc), self.archive('new.zip', changed)
+        report = bundle.compare(old, new)
+        self.assertEqual(report['status'], 'breaking')
+        self.assertIn('multiple_of_incompatible', [f['code'] for f in report['findings']])
+        self.assertEqual(bundle.compare(old, old)['status'], 'no_detected_breakage')
+        # On an integer domain, 0.5 and an absent multiple both admit every integer.
+        equivalent = copy.deepcopy(old_doc)
+        del equivalent['paths']['/items']['get']['requestBody']['content']['application/json']['schema']['multipleOf']
+        half = copy.deepcopy(equivalent)
+        half['paths']['/items']['get']['requestBody']['content']['application/json']['schema']['multipleOf'] = 0.5
+        a, b = self.archive('any.zip', equivalent), self.archive('half.zip', half)
+        self.assertFalse(any(f['code'] == 'multiple_of_incompatible'
+                             for f in bundle.compare(a, b)['findings']))
+
+    def test_cooperative_cancellation_and_budget(self):
+        a = self.archive('a.zip')
+        with self.assertRaisesRegex(ValueError, 'cancelled'):
+            bundle.compare(a, a, cancelled=lambda: True)
+        with self.assertRaisesRegex(ValueError, 'positive'):
+            bundle.compare(a, a, seconds=0)
+        with self.assertRaisesRegex(ValueError, 'positive'):
+            bundle.compare(a, a, seconds=10**1000)
+        self.assertEqual(bundle.compare(a, a, seconds=10)['status'], 'no_detected_breakage')
+        result = subprocess.run([sys.executable, '-B', str(Path(bundle.__file__)),
+                                 str(a), str(a), '--seconds', '0'],
+                                capture_output=True, text=True, timeout=10)
+        self.assertEqual(result.returncode, 2)
 
 
 if __name__ == '__main__':

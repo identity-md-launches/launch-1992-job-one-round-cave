@@ -1,55 +1,22 @@
-# Gathering 22 — Keep the Checked Tools Together
+# Gathering 23 — The Fourfold Knot
 
-Reviewed every line and extended the existing shared API Bundle with approved archive digests and BoundCheck's request/response bounds. All line files, records, goals and previews are unchanged. See `REPORT.md` for per-line trials, limits and the missing inherited line 4 JPEG, and `COINS.md` for the decision to request no new token or deployment.
+This round checked all four lines, joined line 2's bounded ZIP handling to line 4's latest OpenAPI comparison rule in `shared/api_bundle/`, and added one small mark to the inherited gathering wall. No line folder or line record was edited. The per-line results and remaining limits are in `REPORT.md`; `COINS.md` explains why no new coin or contract order is needed.
 
-Run the shared working piece offline:
+From the repository root, repeat the offline checks:
 
 ```sh
+python3 -B gathering/check_tools_23.py
+python3 -B gathering/try_lines_23.py
 python3 -B shared/api_bundle/selftest.py
+python3 -B gathering/check_delivery_23.py
 ```
 
-Observed: 17 integration tests passed, including all ten predecessor checks. Ordinary vendored Python and the standard library are sufficient; nothing needs downloading. The sharing connects line 2's ZIP policy and approved-byte checks to line 4's compatibility rules. Its README explains real archive use and decision exits.
+Observed: all 20 documented line commands returned their expected exits; 151 unittest cases passed. The seven cross-line trials passed, including approved extraction of a ZIP containing the saved public API description, 1 ZTO exact allocation and receipt verification, RewardCompare's expected review exit 1, and an approved ZIP-to-API comparison. The shared bundle passed 19 integration tests. The delivery check passed for 115 gallery records, four goals, source hashes and image preservation. These are local checks; `test/scratch/` is disposable and not a runtime dependency.
 
-Repeat all line checks without writing in line folders:
+A fresh read-only GET of `https://api.imd.fun/openapi.json` on 2026-10-16 returned HTTP 200 and the same 23,132-byte SHA-256 as the saved baseline: `be142840c010710cb2a5b9e5c73e71d8e79ec4054c15661699d60bfa627be96a`. The GET used its own User-Agent. The stored bytes are in `imd-openapi-current-23.json`, so the integration trial is offline. Only the public description GET was used; no payment or mutation endpoint was called. The ZTO metadata trial used line 3's historical real-chain capture; it was not refreshed by this gathering. Nothing was signed, sent, paid or posted.
 
-```sh
-python3 -B gathering/check_tools.py
-```
+`artifacts/gathering/wall-v4.png` is the required 1254 × 1254 RGB PNG, SHA-256 `207cc27f701e53a51df1a10d0aa19c7bd7c73f941a608f0033b89ffda3373875`. `artifacts/gathering/wall.png` links to it to avoid duplicate image bytes. `dist/gathering/23.jpg` is the required 512 × 512 JPEG, 51,923 bytes; `dist/gathering/23.json` points to the PNG's content address. `dist/goals.json` and the self-contained `dist/index.html` were rebuilt from local goals and all 115 records, newest painted mark first within each wall. This is a later gathering, so the 02–21 placeholders were preserved, not recreated.
 
-Observed: 116 unittest cases passed, plus Workplan's original checks and seeded graphs. The 20% uncertainty-margin example deliberately returns exit 2 and is checked as such. Copies live under disposable `test/scratch/`; no runtime dependency uses them.
+The installed imagegen tool made an isolated pigment mark: four ochre flints around one dark stone. A standard-library PNG compositor placed it on bare upper-right rock. The existing BSD-licensed `line-1/media/jpeg-encoder.cjs` source was byte-identical to the build-time encoder used for the JPEG preview; no new runtime dependency is needed. The full wall and preview were inspected. Exactly 4,743 RGB pixels changed in the 215 × 187 mark rectangle and none outside it. `preservation-23.json` and `review-23.json` contain the byte and visual review. Rock, cracks, torchlight, framing, inherited Pepe and his five-digit hands remain. The new mark has no hands or handprints; no words, numbers, logos or symbols were observed. The mark is small in the 512-pixel preview; no visual requirement was judged unmet. Visual approval remains a human judgment.
 
-Try the included real public captures through extraction, comparison, allocation and receipt verification:
-
-```sh
-python3 -B gathering/try_lines.py
-```
-
-Observed: seven commands returned exit 0. The API capture is unchanged; 1 ZTO allocates with exact conservation and verifies against fresh read-only Ethereum metadata at block 26206046. These observations are not payment evidence or an API runtime guarantee. Neither script calls the network. Captures and commands/results are in `live-check-22.json`, `zto-mainnet-22.json`, `check-results-22.json` and `integration-results-22.json`.
-
-Rebuild the static gallery and goals:
-
-```sh
-python3 -B gathering/build_gallery.py
-```
-
-This is a later gathering. All previous records and reserved slots 02–21 are preserved. The existing round uses record count plus one, so the new gathering mark is 22. The gallery includes every numbered record, painted newest first by wall, with unpainted slots linked separately newest first. Styling is inline; previews are sibling JPEGs, with full artifact fallback for the inherited missing line 4 preview. Open `dist/index.html` or serve `dist/` with a static server.
-
-Check the delivery:
-
-```sh
-python3 -B gathering/check_delivery.py
-```
-
-## Wall
-
-Required output: `artifacts/gathering/wall-v3.png`, PNG, **1254 × 1254**. The canonical continuation `artifacts/gathering/wall.png` is a relative symlink to `wall-v3.png`, the separately delivered required output; reading either path returns identical bytes. This avoids storing the same 3.95 MB image twice in the source bundle. Keep the link beside the delivered PNG. Preview: `dist/gathering/22.jpg`, JPEG, **512 × 512**, below 100 KB. Record: `dist/gathering/22.json`; its artifact URL is the lowercase SHA-256 of the actual required PNG. Details are in `review-22.json` and `preservation-22.json`.
-
-The installed imagegen tool generated an isolated pigment mark; standard-library Python combined it with the inherited wall, and FFmpeg decoded/encoded image bytes and made the required JPEG. No media library was installed. A first placement was too faint in the shadow and was discarded. The final addition is two worn flints tied by an ochre cord on bare rock above the inherited Pepe. All 1,528,516 pixels outside the 220 × 200 addition rectangle are unchanged, including all ancestral pigment, hands, face, basket and trails. Only the finished wall and its required JPEG are saved as new images (the canonical wall links to the required output).
-
-Chosen review step: inspect the original and finished wall and the JPEG with `view_image`, then compare protected pixels against the original Git blob. Counted each inherited hand as **four fingers and one thumb**, five digits; no hands or handprints added. No prohibited text, marks or figures observed. Warm rock, cracks, lighting, framing and square dimensions retained. Unmet visual requirements: none observed. The addition is pale and finer in detail than the inherited figure; visual judgment is a single worker's review.
-
-Final generation prompt (installed imagegen tool, built-in mode):
-
-> A tiny primitive prehistoric cave-painting symbol, isolated on uniform pure black. Two flint stones bound together with one red ochre cord, simple charcoal outlines and sparse chalk and yellow ochre dry pigment hatching. The ochre cord has one simple central knot. Flat rough hand-painted burnt-stick strokes, ragged and worn like Lascaux, absolutely not photorealistic stones. Center this single mark within broad empty black margins. NO hands, NO people, NO text or numbers, no logo or watermark, no border, no framing, no realistic shadow, no 3D. The two bound tools symbolize workers keeping reviewed things together.
-
-The black isolation background is removed during compositing; it is not a panel or frame on the finished cave. Only the new pigment is placed, leaving ancestor marks in their original locations and pixels.
+The inherited line 4 record `dist/line-4/22.json` still lacks a `22.jpg` preview. The gallery links to its full artifact for that record. This gathering leaves it unchanged under the line-folder restriction.

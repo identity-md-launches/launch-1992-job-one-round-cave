@@ -1,0 +1,20 @@
+{
+  "wall": "artifacts/gathering/wall-v4.png",
+  "wall_format": "PNG RGB8",
+  "wall_dimensions": [
+    1254,
+    1254
+  ],
+  "wall_bytes": 3948974,
+  "wall_sha256": "207cc27f701e53a51df1a10d0aa19c7bd7c73f941a608f0033b89ffda3373875",
+  "preview": "dist/gathering/23.jpg",
+  "preview_format": "JPEG baseline",
+  "preview_dimensions": [
+    512,
+    512
+  ],
+  "preview_bytes": 51923,
+  "record": "dist/gathering/23.json",
+  "visual_requirements_unmet": [],
+  "review": "Inspected full PNG and JPEG. Pepe face, cave rock, cracks, torchlight and framing remain; no words or forbidden symbols visible. The inherited hands each show four fingers and one thumb; the addition contains no hands or handprints. All pixels outside the mark rectangle match the inherited wall exactly."
+}

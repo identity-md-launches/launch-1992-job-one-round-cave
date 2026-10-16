@@ -1,0 +1,13 @@
+{
+  "inherited_wall_sha256": "ac88d7b34df299e3ce8dbcf2ff53a9b331b54df69e964d06fd68ce049193ed21",
+  "output_sha256": "207cc27f701e53a51df1a10d0aa19c7bd7c73f941a608f0033b89ffda3373875",
+  "mark_rectangle": [
+    920,
+    335,
+    215,
+    187
+  ],
+  "changed_pixels_inside": 4743,
+  "pixels_changed_outside": 0,
+  "protected_rgb_sha256": "8162b314f9bc382a6e67377b2d8b7e3d7c1e371d8ba513ab86e9c31278efb9d3"
+}
