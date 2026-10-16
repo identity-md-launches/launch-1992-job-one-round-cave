@@ -1,0 +1,68 @@
+{
+  "step": 23,
+  "tool": "RewardCompare",
+  "tests": {
+    "new_unittest_cases": 10,
+    "seeded_comparisons": 250,
+    "result": "passed",
+    "file_cli": [
+      {
+        "case": "budget increase",
+        "exit": 1
+      },
+      {
+        "case": "same inputs",
+        "exit": 0
+      },
+      {
+        "case": "tampered report",
+        "exit": 2
+      },
+      {
+        "case": "new output then overwrite refusal",
+        "exits": [
+          1,
+          2
+        ]
+      }
+    ]
+  },
+  "wall": {
+    "path": "artifacts/line-3/wall-v4.png",
+    "format": "PNG",
+    "width": 1254,
+    "height": 1254,
+    "sha256": "f4c2092c9efd81fcac27058df4f48c7c80537147e82ba73b7bbcafb98034d8fe"
+  },
+  "preview": {
+    "path": "dist/line-3/23.jpg",
+    "format": "JPEG",
+    "width": 512,
+    "height": 512,
+    "bytes": 70067
+  },
+  "method": "Built-in imagegen edit; browser canvas isolated the generated mark to bare rock and retained original pixels elsewhere. Mechanical JPEG resize/encoding.",
+  "prompt": "Preserve ancestral cave and all figures; add only two small charcoal bowls with three and two ochre pebbles and a curved ochre bridge in upper-middle bare rock. Earth pigments, worn handmade texture, no text, numbers, arrows, new figures or hands.",
+  "preservation": {
+    "changed_pixel_bbox": [
+      419,
+      249,
+      703,
+      425
+    ],
+    "outside_addition_pixels_equal": true,
+    "inherited_wall_sha256": "daba3292abcc473e6d0d1ef5f53fdd1ca65af92ff8c5aab1a76faa20cef31101"
+  },
+  "visual_review": {
+    "existing_pepes": 2,
+    "visible_hands": 1,
+    "digits_on_visible_hand": 5,
+    "new_hands": 0,
+    "handprints": 0,
+    "new_mark": "three pebbles and two pebbles in two bowls under an ochre arc",
+    "text_or_numbers_or_logos_seen": false,
+    "rock_lighting_framing_preserved": true,
+    "unmet_requirements": [],
+    "limitations": "Visual review is subjective; the bare-rock addition includes generated texture. Outside the addition pixel equality was checked."
+  }
+}

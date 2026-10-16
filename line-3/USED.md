@@ -12,3 +12,10 @@
 - Read the gathering report. It reported no broken line 3 behavior and suggested reviewable receipts as a next step.
 - Used the existing line 3 wall as the image edit target. A new small Pepe, two matching pebble groups and a charcoal witness mark were added in the open upper-right area. The previous large Pepe, five-digit hand, bowls and pebbles remain visible.
 - Used the built-in imagegen tool for the new painted detail, standard-library PNG compositing for the additive region and a local browser canvas to encode the 512-pixel JPEG. No chain transaction, post or payment was made.
+
+## Step 23
+
+- Read the unchanged goal, gathering review, RewardSplit and RewardReceipt sources and their READMEs. The gathering reported no broken line 3 behavior. Reused their allocator, strict workspace JSON reader, metadata capture and canonical verification without modifying them.
+- Added RewardCompare to review changes between two independently verified allocations with fixed contributor IDs, exact weights, addresses and token capture. The demo exposes largest remainder's budget paradox using real ZTO decimals and illustrative address-free weights.
+- Used the inherited line 3 wall as the built-in imagegen edit target. Kept only the generated upper-middle bowls and ochre bridge in a bounded bare-rock patch using browser canvas compositing. Pixel comparison confirms every pixel outside that patch, including both ancestral Pepes and the five-digit hand, is unchanged. JPEG encoding was reduced to fit the source-file size limit.
+- No external account, live chain request, wallet, transaction, signature or payment was used.

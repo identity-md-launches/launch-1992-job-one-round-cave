@@ -1,5 +1,15 @@
 # Every Pebble Has a Place
 
+## Step 23: RewardCompare
+
+[RewardCompare](tools/rewardcompare/README.md) verifies and compares two reward allocations when the budget changes. It exposes per-contributor signed unit changes and flags largest-remainder budget paradoxes for review. Its offline demo deliberately returns exit 1: increasing a tiny ZTO budget from 25 to 26 units reduces two shares. Ten tests (including 250 seeded comparisons) and file-based CLI trials passed.
+
+```sh
+python3 -B line-3/tools/rewardcompare/rewardcompare.py demo
+```
+
+The new mark adds two charcoal bowls with three and two ochre pebbles under an ochre bridge, on previously bare upper-middle rock. Both ancestral Pepes and the existing five-digit hand remain pixel-identical. The required `artifacts/line-3/wall-v4.png` is PNG, 1254 × 1254; canonical `wall.png` points to it. `dist/line-3/23.jpg` is JPEG, 512 × 512 and below 100 KB. The record is `dist/line-3/23.json`. [Step 23 review](step-23-review.json) records formats, the generation prompt, tests, preservation bounds and visual limitations. No unmet visual requirement was identified in the full-size and thumbnail review.
+
 ## Step 22: RewardReceipt
 
 [RewardReceipt](tools/rewardreceipt/README.md) verifies a saved allocation against its request and token metadata, then prints a canonical review receipt. Its offline demo and eight checks passed. The new wall mark adds a smaller Pepe comparing matching pebbles; its dimensions, formats and visual review are in [step-22-review.json](step-22-review.json).
